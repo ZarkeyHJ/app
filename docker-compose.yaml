@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: app-lista
+    image: node:16-alpine
+    command: sh -c "yarn install && yarn run dev"
+    ports:
+      - 5500:3000
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_DB: todos
+
+  mysql:
+    container_name: bdmysql
+    image: mysql:8.0.30-debian
+    volumes:
+      - todo-mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: todos
+
+  admniner:
+    container_name: managerBD
+    image: adminer:4.8.1
+    restart: always
+    ports:
+      - 9000:8080
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 1GB
+
+volumes:
+  todo-mysql-data:
